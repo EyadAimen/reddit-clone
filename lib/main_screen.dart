@@ -17,7 +17,14 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+// not single cuz i have 2 animation controllers
+class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin{
+  // to controll all the animations
+  late AnimationController _upVoteController;
+  late AnimationController _downVoteController;
+  // for the upvote and downvote
+  
+  
   // for the comment section
   bool isVisible = false;
   bool isCommentVisible = false;
@@ -38,6 +45,21 @@ class _MainScreenState extends State<MainScreen> {
     });})
     // when ithe widget is loaded it will automatically plays the video
     ..initialize().then((_) => _videoPlayerController.play());
+
+
+
+    // initialzing the animation controller for the upvote and downVote
+    _upVoteController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this
+    );
+    _downVoteController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this
+    );
+
+    
+
     super.initState();
   }
   @override
@@ -126,7 +148,12 @@ class _MainScreenState extends State<MainScreen> {
                             
                             children: [
                               // upvoteDownVote
-                              const UpVoteDownVote(upvoteDownVoteNum: 135,isColumn: true,),
+                              UpVoteDownVote(
+                                upvoteDownVoteNum: 135,
+                                isColumn: true,
+                                upVoteAnimationController: _upVoteController,
+                                downVoteAnimationController: _downVoteController,
+                              ),
                               const SizedBox(
                                 height: 30,
                               ),
@@ -183,7 +210,7 @@ class _MainScreenState extends State<MainScreen> {
                       child: Visibility(
                         visible: !isVisible,
                         child: Container(
-                          margin: const EdgeInsets.only(left: 20,right: 60,bottom: 50),
+                          margin: const EdgeInsets.only(left: 20,right: 100,bottom: 50),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [

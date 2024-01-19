@@ -10,7 +10,7 @@ class ProfileName extends StatelessWidget {
     return Row(
       children: [
         const Padding(
-          padding: EdgeInsets.only(bottom: 5,right: 10),
+          padding: EdgeInsets.only(bottom: 5,right: 5),
           child: CircleAvatar(
             radius: 10,
             backgroundColor: Colors.blue,
