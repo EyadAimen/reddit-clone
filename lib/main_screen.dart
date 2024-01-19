@@ -2,6 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:reddit_clone/components/video_player.dart';
+import 'package:reddit_clone/components/video_player_controllers.dart';
+import 'package:video_player/video_player.dart';
 
 
 class MainScreen extends StatefulWidget {
@@ -12,9 +15,28 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  // for the comment section
   bool isVisible = false;
   bool isCommentVisible = false;
+  // for the height manipulation
   double percent = 1;
+  // for the video asset
+  String assetVideoPath = "assets/video.MOV";
+  // controoler for the vieo player widget and the controll buttons
+  late VideoPlayerController _videoPlayerController;
+
+  @override
+  void initState() {
+    // to set the asset that the controller will display
+    _videoPlayerController = VideoPlayerController.asset(assetVideoPath)
+    // to listen for video changes
+    ..addListener(() {setState(() {
+      
+    });})
+    // when ithe widget is loaded it will automatically plays the video
+    ..initialize().then((_) => _videoPlayerController.play());
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
   
@@ -77,10 +99,8 @@ class _MainScreenState extends State<MainScreen> {
                   children: [
                     // for the video
                     Center(
-                      child: Container(
-                        color: Colors.red,
-                        height: 100,
-                      ),
+                      child: VideoPlayerWidget(videoPlayerController: _videoPlayerController,),
+                      
                     ),
                     AnimatedOpacity(
                       opacity: !isVisible == true? 1 : 0,
@@ -143,6 +163,14 @@ class _MainScreenState extends State<MainScreen> {
                         ),
                       ),
                     ),
+
+                    Positioned(
+                      top: 0,
+                      right: 50,
+                      left: 50,
+                      bottom: 20,
+                      child: VideoPlayerControllers(videoController: _videoPlayerController)
+                      ),
                   ],
                 ),
               ),
