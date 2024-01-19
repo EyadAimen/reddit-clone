@@ -2,6 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:reddit_clone/components/profile_name.dart';
+import 'package:reddit_clone/components/text_style.dart';
+import 'package:reddit_clone/components/upvote_downvote.dart';
 import 'package:reddit_clone/components/video_player.dart';
 import 'package:reddit_clone/components/video_player_controllers.dart';
 import 'package:video_player/video_player.dart';
@@ -21,7 +24,7 @@ class _MainScreenState extends State<MainScreen> {
   // for the height manipulation
   double percent = 1;
   // for the video asset
-  String assetVideoPath = "assets/video.MOV";
+  String assetVideoPath = "assets/videos/video.MOV";
   // controoler for the vieo player widget and the controll buttons
   late VideoPlayerController _videoPlayerController;
 
@@ -48,7 +51,7 @@ class _MainScreenState extends State<MainScreen> {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        
+        centerTitle: true,
         leading: IconButton(
           onPressed: (){},
           icon: AnimatedOpacity(
@@ -56,7 +59,11 @@ class _MainScreenState extends State<MainScreen> {
             duration: const Duration(milliseconds: 300),
             child: Visibility(
               visible: !isVisible,
-              child: const Icon(Icons.arrow_back)
+              child: const Icon(
+                Icons.arrow_back,
+                color: Colors.white,
+                size: 30,
+              ),
               ),
           ),
         ),
@@ -65,7 +72,7 @@ class _MainScreenState extends State<MainScreen> {
           duration: const Duration(milliseconds: 300),
           child: Visibility(
             visible: !isVisible,
-            child: const Text("r/MechanicalKeyBoards"),
+            child: const ProfileName(name: "r/MechanicalKeyBoards"),
             ),
         ),
         actions: [
@@ -76,7 +83,11 @@ class _MainScreenState extends State<MainScreen> {
               visible: !isVisible,
               child: IconButton(
                 onPressed: (){},
-                icon: const Icon(Icons.more_horiz),
+                icon: const Icon(
+                  Icons.more_horiz,
+                  color: Colors.white,
+                  size: 20,
+                ),
                 ),
             ),
           ),
@@ -89,7 +100,7 @@ class _MainScreenState extends State<MainScreen> {
           children: [
             // will be a stack with the video,name of the user, caption and the other buttons
             AnimatedContainer(
-              duration: Duration(milliseconds: 300),
+              duration: const Duration(milliseconds: 300),
               height: MediaQuery.of(context).size.height*percent,
               width: MediaQuery.of(context).size.width,
               color: Colors.black,
@@ -107,34 +118,62 @@ class _MainScreenState extends State<MainScreen> {
                       duration: const Duration(milliseconds: 300),
                       child: Visibility(
                         visible: !isVisible,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          
-                          children: [
-                            FaIcon(FontAwesomeIcons.arrowUp),
-                            Text("13.5k"),
-                            Icon(Icons.arrow_downward),
-                            IconButton(
-                              onPressed: (){
-                                if(isVisible == false){
-                                  setState(() {
-                                  isVisible = true;
-                                  percent = 0.25;
-                                });
-                                }
-                                else{
-                                  setState(() {
-                                  isVisible = false;
-                                  percent = 1;
-                                });
-                                }
-                                
-                              },
-                              icon: Icon(Icons.comment)
-                              ),
-                            Icon(Icons.share),
+                        child: Padding(
+                          padding: EdgeInsets.only(bottom: 50, right: 20),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
                             
-                          ],
+                            
+                            children: [
+                              // upvoteDownVote
+                              const UpVoteDownVote(upvoteDownVoteNum: 135,isColumn: true,),
+                              const SizedBox(
+                                height: 30,
+                              ),
+                              
+                              GestureDetector(
+                                onTap: (){
+                                  if(isVisible == false){
+                                    setState(() {
+                                    isVisible = true;
+                                    percent = 0.25;
+                                  });
+                                  }
+                                  else{
+                                    setState(() {
+                                    isVisible = false;
+                                    percent = 1;
+                                  });
+                                  }
+                                  
+                                },
+                                child: SizedBox(
+                                  height: 25,
+                                  child: Image.asset(
+                                    "assets/icons/chat.png",
+                                    color: Colors.white,
+                                    ),
+                                ),
+                                ),
+                                const SizedBox(
+                                  height: 30,
+                                ),
+                              SizedBox(
+                                height: 25,
+                                child: Image.asset(
+                                  "assets/icons/upload.png",
+                                  color: Colors.white,
+                                ),
+                                
+                              ),
+
+                              const SizedBox(
+                                height: 
+                                30,
+                              ),
+                              
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -144,33 +183,31 @@ class _MainScreenState extends State<MainScreen> {
                       child: Visibility(
                         visible: !isVisible,
                         child: Container(
-                          margin: EdgeInsets.only(left: 20,right: 60),
+                          margin: const EdgeInsets.only(left: 20,right: 60,bottom: 50),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              Row(
-                                children: [
-                                  CircleAvatar(
-                                    radius: 5,
-                                    backgroundColor: Colors.blue,
-                                  ),
-                                  Text("Xury46"),
-                                ],
+                              
+                              const ProfileName(name: "Xury46"),
+                              Text(
+                                "After a year of collecting parts for this build, I present my finished Heavy-9 (Thocky typing test at the end!)",
+                                style: UnifiedTextStyle.style,
                               ),
-                              Text("After a year of collecting parts for this build, I present my finished Heavy-9 (Thocky typing test at the end!)")
                             ],
                           ),
                         ),
                       ),
                     ),
 
-                    Positioned(
-                      top: 0,
-                      right: 50,
-                      left: 50,
-                      bottom: 20,
-                      child: VideoPlayerControllers(videoController: _videoPlayerController)
-                      ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        VideoPlayerControllers(videoController: _videoPlayerController),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -180,9 +217,8 @@ class _MainScreenState extends State<MainScreen> {
             
               Visibility(
                 visible: isVisible,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                  child: Container(
+                  child: AnimatedContainer(
+                    duration: Duration(milliseconds: 300),
                     height: MediaQuery.of(context).size.height*.75,
                     width: double.infinity,
                     decoration: BoxDecoration(
@@ -223,7 +259,7 @@ class _MainScreenState extends State<MainScreen> {
                             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,
-                            physics: AlwaysScrollableScrollPhysics(),
+                            physics: const AlwaysScrollableScrollPhysics(),
                             itemCount: list.length,
                             
                           
@@ -317,7 +353,7 @@ class _MainScreenState extends State<MainScreen> {
                       ],
                     ),
                   ),
-                ),
+                
               ),
               
           ],

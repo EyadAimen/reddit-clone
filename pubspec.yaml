@@ -38,5 +38,6 @@ flutter:
 
   # my video asset
   assets:
-    - assets/
+    - assets/videos/
+    - assets/icons/
   
