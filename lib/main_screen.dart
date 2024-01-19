@@ -1,7 +1,6 @@
 // this is the screen that contains all the widgets
 
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:reddit_clone/components/profile_name.dart';
 import 'package:reddit_clone/components/text_style.dart';
 import 'package:reddit_clone/components/upvote_downvote.dart';
@@ -24,7 +23,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin{
   late AnimationController _downVoteController;
   // for the upvote and downvote
   
-  
+  // for the textField when tapping on the reply button it focuses on the textField
+  late FocusNode _focusNode;
+
   // for the comment section
   bool isVisible = false;
   bool isCommentVisible = false;
@@ -58,10 +59,18 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin{
       vsync: this
     );
 
-    
+    _focusNode = FocusNode();
 
     super.initState();
   }
+
+  @override
+  void dispose() {
+    _downVoteController.dispose();
+    _upVoteController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
   
@@ -141,7 +150,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin{
                       child: Visibility(
                         visible: !isVisible,
                         child: Padding(
-                          padding: EdgeInsets.only(bottom: 50, right: 20),
+                          padding: const EdgeInsets.only(bottom: 50, right: 20),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.end,
                             
@@ -240,15 +249,20 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin{
               ),
             ),
 
+
+
+
+
+
             // the comments part
             
               Visibility(
                 visible: isVisible,
                   child: AnimatedContainer(
-                    duration: Duration(milliseconds: 300),
+                    duration: const Duration(milliseconds: 300),
                     height: MediaQuery.of(context).size.height*.75,
                     width: double.infinity,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Colors.black,
                       borderRadius: BorderRadius.only(topRight: Radius.circular(20),topLeft: Radius.circular(20)),
                     ),
@@ -263,9 +277,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin{
                           },
                           child: Container(
                             height: 50,
-                            decoration: BoxDecoration(
-                              
-                              // 
+                            decoration: const BoxDecoration(
                               border: BorderDirectional(bottom: BorderSide()),
                             ),
                             child: Center(
@@ -296,10 +308,10 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin{
                                 
                                 padding: EdgeInsets.only(
                                   left: list[index][2] == 0? 10 :
-                                  list[index][2] == 1? 20: 
-                                  list[index][2] == 2? 30:
-                                  list[index][2] == 3? 40:
-                                  list[index][2] == 4? 50 : 60,
+                                  list[index][2] == 1? 30: 
+                                  list[index][2] == 2? 50:
+                                  list[index][2] == 3? 70:
+                                  list[index][2] == 4? 90 : 60,
                                   right: 10
                                 ),
                                 // to put a space between non related comments
@@ -309,28 +321,42 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin{
                                 
                   
                                 child: Container(
-                                  padding: EdgeInsets.only(left: 5),
+                                  padding: const EdgeInsets.only(left: 10,bottom: 10),
                                   decoration: BoxDecoration(
-                                    border: list[index][2] > 0? Border(
-                                    left: BorderSide(color: Colors.red,),
+                                    border: list[index][2] > 0? const Border(
+                                    left: BorderSide(color: Colors.grey,),
                                     ): null,
                                   ),
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text(list[index][0],
-                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),),
+                                      ProfileName(name: list[index][0]),
                                       Text(list[index][1],
-                                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),),
+                                      style: UnifiedTextStyle.style),
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.end,
                                         children: [
-                                          Icon(Icons.more_horiz),
-                                          Icon(Icons.replay),
-                                          FaIcon(FontAwesomeIcons.arrowUp),
-                                          Text("10"),
-                                          Icon(Icons.arrow_downward),
+                                          const Icon(Icons.more_horiz,
+                                          size: 25,
+                                          color: Colors.white,
+                                          ),
+                                          const SizedBox(width: 5,),
+                                          SizedBox(
+                                            height: 25,
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                FocusScope.of(context).requestFocus(_focusNode);
+                                              },
+                                              child: Image.asset(
+                                                "assets/icons/reply.png",
+                                                color: Colors.white,
+                                              ),
+                                              ),
+                                          ),
+
+                                          const SizedBox(width: 5,),
+                                          UpVoteDownVote(upvoteDownVoteNum: list[index][3], isColumn: false, upVoteAnimationController: _upVoteController, downVoteAnimationController: _downVoteController),
                                         ],
                                       ),
                                     ],
@@ -349,26 +375,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin{
                           color: Colors.grey[800],
                           child: Center(
                             child: TextField(
-                              onTap: (){
-                                setState(() {
-                                  isCommentVisible = true;
-                                  print(isCommentVisible);
-                                });
-                              },
-                              onSubmitted: (_){
-                                setState(() {
-                                  isCommentVisible = false;
-                                  print(isCommentVisible);
-                                  print("==============================");
-                                });
-                              },
-                              // onTapOutside: (_){
-                              //   setState(() {
-                              //     isCommentVisible = false;
-                              //     print(isCommentVisible);
-                              //   });
-                              // },
-                              decoration: InputDecoration(
+                              focusNode: _focusNode,
+                              
+                              decoration: const InputDecoration(
                                 border: OutlineInputBorder(borderSide: BorderSide.none),
                                 hintText: "Add a comment",
                                 suffixIcon: Icon(Icons.photo_album_outlined)
@@ -392,25 +401,26 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin{
     
   }
   // a list of lists that contains the name of the user and the comment and the reply
-// the last element indicates the number of replies so i can desint the boorder on the left
+  // the third element indicates the number of replies so i can desint the boorder on the left
+  // the last element is for the upvotes
 List<List> list = [
-  ["eren","here is my comment", 0],
-  ["eren","here is my comment about the most intersing part in the world .vv... here i am typing to take some space hhhh", 1],
-  ["eren","here is my comment", 2],
-  ["eren","here is my comment", 0],
-  ["eren","here is my comment", 0],
-  ["eren","here is my comment", 1],
-  ["eren","here is my comment", 2],
-  ["eren","here is my comment", 3],
-  ["eren","here is my comment", 0],
-  ["eren","here is my comment", 0],
-  ["eren","here is my comment", 1],
-  ["eren","here is my comment", 2],
-  ["eren","here is my comment", 3],
-  ["eren","here is my comment", 4],
-  ["eren","here is my comment", 0],
-  ["eren","here is my comment", 0],
-  ["eren","here is my comment", 0],
+  ["eren","here is my comment", 0,23],
+  ["eren","here is my comment about the most intersing part in the world .vv... here i am typing to take some space hhhh", 1,1],
+  ["eren","here is my comment", 2,5],
+  ["eren","here is my comment", 0,8],
+  ["eren","here is my comment", 0,3],
+  ["eren","here is my comment", 1,2],
+  ["eren","here is my comment", 2,1],
+  ["eren","here is my comment", 3,7],
+  ["eren","here is my comment", 0,1],
+  ["eren","here is my comment", 0,1],
+  ["eren","here is my comment", 1,1],
+  ["eren","here is my comment", 2,1],
+  ["eren","here is my comment", 3,1],
+  ["eren","here is my comment", 4,1],
+  ["eren","here is my comment", 0,1],
+  ["eren","here is my comment", 0,44],
+  ["eren","here is my comment", 0,55],
 ];
 }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reddit_clone/components/text_style.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPlayerControllers extends StatefulWidget {
@@ -16,9 +17,11 @@ class _VideoPlayerControllersState extends State<VideoPlayerControllers> {
     isMuted = widget.videoController.value.volume == 0;
     super.initState();
   }
+  // late int _duration = (widget.videoController.value.duration - widget.videoController.value.position).inSeconds;
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         IconButton(
           onPressed: (){
@@ -33,15 +36,27 @@ class _VideoPlayerControllersState extends State<VideoPlayerControllers> {
             widget.videoController.value.isPlaying? 
             Icons.pause
             : Icons.play_arrow,
+            color: Colors.white,
+            size: 30,
+            
           ),
         ),
         Expanded(
           child: VideoProgressIndicator(
             widget.videoController,
             allowScrubbing: true,
+            colors: VideoProgressColors(
+              playedColor: Colors.white,
+              backgroundColor: Colors.grey[900]!,
+              ),
           ),
         ),
-        Text("${widget.videoController.value.position.inMinutes}:${widget.videoController.value.position.inSeconds}"),
+        Text(
+          // to display the remainig time appropriately
+         "${((widget.videoController.value.duration - widget.videoController.value.position).inMinutes)}:${((widget.videoController.value.duration - widget.videoController.value.position).inSeconds) % 60}",
+        // "${_duration / 60}:${_duration - 60*(_duration % 60)}",
+        style: UnifiedTextStyle.style,
+        ),
         IconButton(
           onPressed: () {
             widget.videoController.setVolume(isMuted? 1 : 0).then((value) {
@@ -58,7 +73,8 @@ class _VideoPlayerControllersState extends State<VideoPlayerControllers> {
             });
           },
           icon: Icon(isMuted? Icons.volume_mute : Icons.volume_up,
-          color: Colors.red,
+          color: Colors.white,
+          size: 30,
           ),
         ),
       ],
