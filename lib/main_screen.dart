@@ -258,135 +258,157 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin{
             
               Visibility(
                 visible: isVisible,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    height: MediaQuery.of(context).size.height*.75,
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.only(topRight: Radius.circular(20),topLeft: Radius.circular(20)),
-                    ),
-                    child: Column(
-                      children: [
-                        GestureDetector(
-                          onVerticalDragDown: (direction){
-                            setState(() {
-                                isVisible = false;
-                                percent = 1;
-                              });
-                          },
-                          child: Container(
-                            height: 50,
-                            decoration: const BoxDecoration(
-                              border: BorderDirectional(bottom: BorderSide()),
-                            ),
-                            child: Center(
-                              child: Container(
-                                height: 10,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
+                  child: Dismissible(
+                    key: Key("value"),
+                    direction: DismissDirection.down,
+                    onUpdate: (details){
+                      if(details.progress >= 0.1) {
+                        setState(() {
+                        percent = details.progress;
+                      });
+                      }
+                      
+                      print("=========================");
+                      print(details.progress);
+                    },
+                    onDismissed: (DismissDirection dismiss) {
+                      
+                      setState(() {
+                        isVisible = false;
+                        
+                      });
+              
+                    },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      height: MediaQuery.of(context).size.height*.75,
+                      width: double.infinity,
+                      decoration: const BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.only(topRight: Radius.circular(20),topLeft: Radius.circular(20)),
+                      ),
+                      child: Column(
+                        children: [
+                          GestureDetector(
+                            // onVerticalDragDown: (direction){
+                            //   setState(() {
+                            //       isVisible = false;
+                            //       percent = 1;
+                            //     });
+                            // },
+                            child: Container(
+                              height: 50,
+                              decoration: const BoxDecoration(
+                                border: BorderDirectional(bottom: BorderSide()),
                               ),
-                            ),
-                          ),
-                        ),
-                  
-                        Expanded(
-                          child: ListView.builder(
-                            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-                            scrollDirection: Axis.vertical,
-                            shrinkWrap: true,
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            itemCount: list.length,
-                            
-                          
-                            itemBuilder: (context, index){
-                              // this container contains the comments and other stuff
-                              return Container(
-                                
-                                padding: EdgeInsets.only(
-                                  left: list[index][2] == 0? 10 :
-                                  list[index][2] == 1? 30: 
-                                  list[index][2] == 2? 50:
-                                  list[index][2] == 3? 70:
-                                  list[index][2] == 4? 90 : 60,
-                                  right: 10
-                                ),
-                                // to put a space between non related comments
-                                margin: EdgeInsets.only(bottom: (index< list.length-1 &&list[index+1][2] == 0)?  10 : 0),
-                                color: Colors.grey[900],
-                                  
-                                
-                  
+                              child: Center(
                                 child: Container(
-                                  padding: const EdgeInsets.only(left: 10,bottom: 10),
+                                  height: 10,
+                                  width: 50,
                                   decoration: BoxDecoration(
-                                    border: list[index][2] > 0? const Border(
-                                    left: BorderSide(color: Colors.grey,),
-                                    ): null,
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      ProfileName(name: list[index][0]),
-                                      Text(list[index][1],
-                                      style: UnifiedTextStyle.style),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.end,
-                                        children: [
-                                          const Icon(Icons.more_horiz,
-                                          size: 25,
-                                          color: Colors.white,
-                                          ),
-                                          const SizedBox(width: 5,),
-                                          SizedBox(
-                                            height: 25,
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                FocusScope.of(context).requestFocus(_focusNode);
-                                              },
-                                              child: Image.asset(
-                                                "assets/icons/reply.png",
-                                                color: Colors.white,
-                                              ),
-                                              ),
-                                          ),
-
-                                          const SizedBox(width: 5,),
-                                          UpVoteDownVote(upvoteDownVoteNum: list[index][3], isColumn: false, upVoteAnimationController: _upVoteController, downVoteAnimationController: _downVoteController),
-                                        ],
-                                      ),
-                                    ],
+                                    color: Colors.grey,
+                                    borderRadius: BorderRadius.circular(20),
                                   ),
                                 ),
-                              );
-                            },
-                            ),
-                        ),
-                  
-                        Container(
-                          
-                          height: 50,
-                          
-                          margin: EdgeInsets.all(5),
-                          color: Colors.grey[800],
-                          child: Center(
-                            child: TextField(
-                              focusNode: _focusNode,
-                              
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(borderSide: BorderSide.none),
-                                hintText: "Add a comment",
-                                suffixIcon: Icon(Icons.photo_album_outlined)
                               ),
                             ),
                           ),
-                        ),
-                  
-                      ],
+                    
+                          Expanded(
+                            child: ListView.builder(
+                              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              itemCount: list.length,
+                              
+                            
+                              itemBuilder: (context, index){
+                                // this container contains the comments and other stuff
+                                return Container(
+                                  
+                                  padding: EdgeInsets.only(
+                                    left: list[index][2] == 0? 10 :
+                                    list[index][2] == 1? 30: 
+                                    list[index][2] == 2? 50:
+                                    list[index][2] == 3? 70:
+                                    list[index][2] == 4? 90 : 60,
+                                    right: 10
+                                  ),
+                                  // to put a space between non related comments
+                                  margin: EdgeInsets.only(bottom: (index< list.length-1 &&list[index+1][2] == 0)?  10 : 0),
+                                  color: Colors.grey[900],
+                                    
+                                  
+                    
+                                  child: Container(
+                                    padding: const EdgeInsets.only(left: 10,bottom: 10),
+                                    decoration: BoxDecoration(
+                                      border: list[index][2] > 0? const Border(
+                                      left: BorderSide(color: Colors.grey,),
+                                      ): null,
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        ProfileName(name: list[index][0]),
+                                        Text(list[index][1],
+                                        style: UnifiedTextStyle.style),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          children: [
+                                            const Icon(Icons.more_horiz,
+                                            size: 25,
+                                            color: Colors.white,
+                                            ),
+                                            const SizedBox(width: 5,),
+                                            SizedBox(
+                                              height: 25,
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  FocusScope.of(context).requestFocus(_focusNode);
+                                                },
+                                                child: Image.asset(
+                                                  "assets/icons/reply.png",
+                                                  color: Colors.white,
+                                                ),
+                                                ),
+                                            ),
+                    
+                                            const SizedBox(width: 5,),
+                                            UpVoteDownVote(upvoteDownVoteNum: list[index][3], isColumn: false, upVoteAnimationController: _upVoteController, downVoteAnimationController: _downVoteController),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                              ),
+                          ),
+                    
+                          Container(
+                            
+                            height: 50,
+                            
+                            margin: EdgeInsets.all(5),
+                            color: Colors.grey[800],
+                            child: Center(
+                              child: TextField(
+                                focusNode: _focusNode,
+                                
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(borderSide: BorderSide.none),
+                                  hintText: "Add a comment",
+                                  suffixIcon: Icon(Icons.photo_album_outlined)
+                                ),
+                              ),
+                            ),
+                          ),
+                    
+                        ],
+                      ),
                     ),
                   ),
                 
